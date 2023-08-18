@@ -14,6 +14,14 @@ class NoteService extends ApiService {
     return this.get('/visualizar')
   }
 
+  update(note){
+    return this.put('/editar', note)
+  }
+
+  remove(note){
+    return this.delete('/deletar', note)
+  }
+
 }
 
 export default NoteService

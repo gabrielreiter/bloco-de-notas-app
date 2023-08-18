@@ -3,10 +3,10 @@ import React from "react";
 import 'bootswatch/dist/flatly/bootstrap.css'
 import '../custom.css'
 
-import axios from 'axios'
 import Card from "./card"
 import FormGroup from "./formGroup";
 import NoteService from "../app/service/noteService"
+import {successMessage, errMessage} from '../components/toastr'
 
 class NoteForm extends React.Component {
 
@@ -22,15 +22,16 @@ class NoteForm extends React.Component {
 
   prepareCreate = () => {
 
-    const updateTimeStamp = new Date().toLocaleString()
-
     const note = {
       titulo: this.state.title,
       texto: this.state.text,
-      dataAtualizacao: updateTimeStamp
     }
 
-    this.service.save(note)
+    this.service.save(note).then(response => {
+      successMessage("Nota criada com sucesso!")
+    }).catch(error => {
+      errMessage(errMessage)
+    })
   }
 
   cancel = () => {
