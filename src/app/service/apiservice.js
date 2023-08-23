@@ -20,9 +20,9 @@ class ApiService {
     return httpClient.put(requestURL, object)
   }
 
-  delete(url, object){
+  delete(url){
     const requestURL = `${this.apiurl}${url}`
-    return httpClient.delete(requestURL, object)
+    return httpClient.delete(requestURL)
   }
 
   get(url){

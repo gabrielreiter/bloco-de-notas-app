@@ -13,27 +13,27 @@ toastr.options = {
   "preventDuplicates": false,
   "onclick": null,
   "showDuration": "3000000",
-  "hideDuration": "100000",
+  "hideDuration": 100000,
   "timeOut": "5000",
   "extendedTimeOut": "1000",
   "showEasing": "swing",
   "hideEasing": "linear",
   "showMethod": "fadeIn",
-  "hideMethod": "fadeout"
+  "hideMethod": "slideDown"
 }
 
-export function showMessage(title, message, type){
-  toastr[type](message, title)
+export function showMessage(title, message, type, hideDuration){
+  toastr[type](message, title, hideDuration)
 }
 
-export function errMessage(message){
-  showMessage('Erro', message, 'error')
+export function errMessage(message, duration){
+  showMessage('Erro', message, 'error', duration)
 }
 
-export function successMessage(message){
-  showMessage('Sucesso', message, 'success')
+export function successMessage(message, duration){
+  showMessage('Sucesso', message, 'success', duration)
 }
 
-export function alertMessage(message){
-  showMessage('Alerta', message, 'alert')
+export function warningMessage(message, duration){
+  showMessage('Alerta', message, 'warning', duration)
 }

@@ -18,8 +18,8 @@ class NoteService extends ApiService {
     return this.put('/editar', note)
   }
 
-  remove(note){
-    return this.delete('/deletar', note)
+  remove(id){
+    return this.delete(`/${id}`)
   }
 
 }

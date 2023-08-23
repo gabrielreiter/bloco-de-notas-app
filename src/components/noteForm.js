@@ -30,12 +30,8 @@ class NoteForm extends React.Component {
     this.service.save(note).then(response => {
       successMessage("Nota criada com sucesso!")
     }).catch(error => {
-      errMessage(errMessage)
+      errMessage(error)
     })
-  }
-
-  cancel = () => {
-    this.props.history.push('/home')
   }
 
   render(){
@@ -62,7 +58,6 @@ class NoteForm extends React.Component {
                       </textarea>
                 </FormGroup>
                 <button onClick={this.prepareCreate} type="button" className="btn btn-primary">Salvar</button>
-                <button onClick={this.cancel} type="button" className="btn btn-danger">Cancelar</button>
               </div>
             </div>
           </div>

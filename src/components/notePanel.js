@@ -8,12 +8,17 @@ import NoteService from "../app/service/noteService";
 
 import Card from "./card";
 
-import {successMessage, errMessage} from '../components/toastr'
+import {successMessage, errMessage, warningMessage} from '../components/toastr'
 
 class NotePanel extends React.Component {
 
+  inputTitle = ''
+  inputText = ''
+  cardProperties = null
+
   state = {
     notes: [],
+    id : 0,
     title : '',
     text : ''
   }
@@ -23,46 +28,69 @@ class NotePanel extends React.Component {
     this.service = new NoteService()
   }
 
-  prepareUpdate = () => {
+  prepareUpdate = (buttonId) => {
 
-    const note = {
-      titulo: this.state.title,
-      texto: this.state.text,
-      dataAtualizacao: null
+    if (buttonId == this.state.id){
+      const note = {
+        id: this.state.id,
+        titulo: this.state.title,
+        texto: this.state.text,
+      }
+
+      this.service.update(note).then(response => {
+        successMessage("Nota atualizada com sucesso!", 300000)
+      }).catch(error => {
+        errMessage(error, 300000)
+      })
     }
-
-    this.service.update(note).then(response => {
-      successMessage("Nota atualizada com sucesso!")
-    }).catch(error => {
-      console.log(error)
-    })
+    else {
+      warningMessage("Você não alterou as informações desta nota!", 300000)
+    }
   }
 
-  prepareDelete = () => {
+  prepareDelete = (buttonId) => {
 
-    const note = {
-      titulo: this.state.title,
-      texto: this.state.text,
-      dataAtualizacao: null
-    }
+    const noteId = parseInt(buttonId)
 
-    this.service.remove(note).then(response => {
-      successMessage("Nota removida com sucesso!")
+    this.service.remove(noteId).then(response => {
+      successMessage("Nota removida com sucesso!", 300000)
     }).catch(error => {
-      console.log(error)
+      errMessage(error, 300000)
     })
+    window.location.reload()
   }
 
   chargeNotes = () => {
     try {
-     this.service.view().then(response => {
-        this.setState({
-          notes: response.data
+      if (this.state.notes[0] == null) {
+        this.service.view().then(response => {
+          this.setState({
+            notes: response.data
+          })
         })
-      })
-    } catch (err) {
-      console.log(err)
+      }
+    } catch (error) {
+      errMessage(error, 300000)
     }
+  }
+
+  setVariables = (defaultValue, value) => {
+    this.state.notes.map((note, index) => {
+      if (note.titulo == defaultValue){
+        this.setState({
+          id: note.id,
+          title : value,
+          text : note.texto
+        })
+      }
+      else if (note.texto == defaultValue){
+        this.setState({
+          id: note.id,
+          title : note.titulo,
+          text : value
+        })
+      }
+    });
   }
 
   render() {
@@ -75,26 +103,37 @@ class NotePanel extends React.Component {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="bs-component">
+                    <Note htmlFor="idField">
+                    <label className="form-label" htmlFor="noteIdLabel">Sequência</label>
+                    <input className="form-control" id="inputId" type="text" defaultValue={note.id} disabled={true}>
+                    </input>
+                    </Note>
                     <Note htmlFor="inputTitle">
+                    <label className="form-label" htmlFor="noteTitleLabel">Título</label>
                     <input type="title" 
                           className="form-control"
                           id="inputTitle"
                           name="title"
-                          onChange={e => this.setState({title: e.target.value})}
-                          defaultValue={note.titulo}>
+                          onChange={e => this.setVariables(e.target.defaultValue, e.target.value)}
+                          defaultValue={note.titulo}
+                          ref={(inputTitle) => {this.inputTitle = inputTitle}}>
                           </input>
                     </Note>
                     <Note htmlFor="inputText">
+                    <label className="form-label" htmlFor="noteTextLabel">Texto</label>
                     <textarea type="text" 
                           className="form-control"
                           id="inputText"
                           name="text"
-                          onChange={e => this.setState({title: e.target.value})}
-                          defaultValue={note.texto}>
+                          onChange={e => this.setVariables(e.target.defaultValue, e.target.value)}
+                          defaultValue={note.texto}
+                          ref={(inputText) => {this.inputText = inputText}}>
                           </textarea>
                     </Note>
-                    <button onClick={this.prepareUpdate} type="button" className="btn btn-primary">Salvar</button>
-                    <button onClick={this.prepareDelete} type="button" className="btn btn-danger">Excluir</button>
+                    <button id={note.id} onClick={e => this.prepareUpdate(e.target.id)} 
+                      type="button" className="btn btn-primary">Salvar</button>
+                    <button id={note.id} onClick={e => this.prepareDelete(e.target.id)} 
+                      type="button" className="btn btn-danger">Excluir</button>
                   </div>
                 </div>
               </div>
